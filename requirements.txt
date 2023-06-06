@@ -13,3 +13,4 @@ accelerate
 bitsandbytes
 click
 openpyxl
+fastapi==0.96.0
