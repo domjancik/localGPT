@@ -88,6 +88,25 @@ qa = RetrievalQA.from_chain_type(
 )
 
 
+def get_source_link(doc_path: str):
+    """
+    Get the source link from the document path
+
+    Args:
+        doc_path (str): The path to the document
+
+    Returns:
+        str: The source link
+    """
+    if doc_path.endswith(".txt"):
+        with open(doc_path, "r") as f:
+            lines = f.readlines()
+            last_line = lines[-1]
+            if last_line.startswith("Source:"):
+                return last_line.split("Source:")[1].strip()
+    return doc_path
+
+
 @app.post("/api/v1/questions")
 async def ask_question(question: Question) -> Response:
     query = question.question
@@ -112,4 +131,6 @@ async def ask_question(question: Question) -> Response:
         "----------------------------------SOURCE DOCUMENTS---------------------------"
     )
 
-    return Response(data=ResponseData(question=query, answer=answer, sources=docs))
+    sources = [get_source_link(doc.metadata["source"]) for doc in docs]
+
+    return Response(data=ResponseData(question=query, answer=answer, sources=sources))
