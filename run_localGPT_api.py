@@ -132,5 +132,6 @@ async def ask_question(question: Question) -> Response:
     )
 
     sources = [get_source_link(doc.metadata["source"]) for doc in docs]
+    sources = list(set(sources))
 
     return Response(data=ResponseData(question=query, answer=answer, sources=sources))
